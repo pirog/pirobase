@@ -1,0 +1,29 @@
+; $Id: pirobase.info,v 1.0 2011/4/28 00:32:00 pirog Exp $
+
+name = Pirobase
+description = a slight extenstion of the clean theme
+core = 6.x
+engine = phptemplate
+screenshot = images/screenshot.png
+stylesheets[all][] = css/reset.css
+stylesheets[all][] = css/htmlelements.css
+stylesheets[all][] = css/layout.css
+stylesheets[all][] = css/navigation.css
+stylesheets[all][] = css/typography.css
+stylesheets[all][] = css/color.css
+scripts[] = js/clean.js
+regions[left] = Left Sidebar
+regions[right] = Right Sidebar
+regions[header_top] = Header Top
+regions[header_bottom] = Header Bottom
+regions[content_top] = Content Top
+regions[content_bottom] = Content Bottom
+regions[footer_top] = Footer Top
+regions[footer_bottom] = Footer Bottom
+
+; Information added by drupal.org packaging script on 2010-04-22
+version = "6.x-1.0"
+core = "6.x"
+project = "pirobase"
+datestamp = "1271896505"
+

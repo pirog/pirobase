@@ -1,0 +1,76 @@
+/* $Id: layout.css,v 1.0 2011/4/28 00:32:00 pirog Exp $ */
+
+/* Layout */
+ 
+.limiter {
+  width: 960px;
+  margin: 0 auto;
+  padding: 10px 0;
+}
+
+#main {
+ margin-top:10px;
+}
+
+#links {
+ height:90px;
+ overflow:hidden;
+}
+
+#left {
+  margin-right: 20px;
+  float: left;
+}
+
+#header {
+  padding-top:20px;
+  padding-bottom:15px;
+}
+
+#right {
+  margin-left: 20px;
+  float: right;
+}
+
+#footer {
+  min-height:165px;
+}
+
+#search_box {
+  float:right;
+}
+
+#header_right {
+  width:600px;
+  float:right;
+}
+
+.one-sidebar #content {
+  width: 590px;
+}
+
+.one-sidebar .side-right, .side-left {
+  width: 325px;
+}
+
+.two-sidebars #content {
+  width: 460px;
+}
+
+.two-sidebars .side-right, .side-left {
+  width: 220px;
+}
+
+.no-sidebars #content {
+  float: none;
+}
+
+.sidebar-right #content,
+.two-sidebars #content {
+  float: left;
+}
+
+.sidebar-left #content {
+  float: right;
+}
+
