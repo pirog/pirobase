@@ -2,20 +2,17 @@
 // $Id: template.php, v 1.0 2011/4/28 00:32:00 pirog Exp $
 
 // Auto-rebuild the theme registry during theme development.
-if (theme_get_setting('pirobase_rebuild_registry')) {
+if (theme_get_setting('twostate_rebuild_registry')) {
   drupal_rebuild_theme_registry();
 }
 
 /**
- * Implementation of hook_theme().
+ * Modify theme variables
  */
-function pirobase_theme() {
-  return array(
-    'fieldset' => array(
-      'arguments' => array('element' => array()),
-      'template' => 'fieldset',
-    ),
-  );
+function twostate_preprocess(&$variables) {
+  global $user;                                            // Get the current user
+  $variables['is_admin'] = in_array('admin', $user->roles);     // Check for Admin, logged in
+  $variables['logged_in'] = ($user->uid > 0) ? TRUE : FALSE;
 }
 
 /**
@@ -24,7 +21,7 @@ function pirobase_theme() {
  * @param $variables
  *   An array of variables to pass to the theme template.
  */
-function pirobase_preprocess_node(&$variables) {
+function twostate_preprocess_node(&$variables) {
   global $theme_key;
   $node = $variables['node'];
 
@@ -36,7 +33,7 @@ function pirobase_preprocess_node(&$variables) {
   }
 
   // Create node classes.
-  pirobase_node_classes($variables);
+  twostate_node_classes($variables);
 
   // Add node template file suggestions for node-type-teaser and node-type-prevew
   if (!$variables['page']) {
@@ -46,7 +43,7 @@ function pirobase_preprocess_node(&$variables) {
 
   if ($node->op == 'Preview' && !$variables['teaser']) {
     $variables['template_files'][] = 'node-'. $node->type .'--preview';
-    $variables['template_files'][] = 'node-'. $node->type .'-'. $node->nid .'--preview';    
+    $variables['template_files'][] = 'node-'. $node->type .'-'. $node->nid .'--preview';
   }
 
   $function = $theme_key . '_preprocess_node_' . $node->type;
@@ -61,36 +58,37 @@ function pirobase_preprocess_node(&$variables) {
  * @param $variables
  *   An array of variables to pass to the theme template.
  */
-function pirobase_preprocess_page(&$variables) {
+function twostate_preprocess_page(&$variables) {
   $base_path = base_path();
-  $variables['base_theme'] = $path_to_pirobase = drupal_get_path('theme', 'pirobase') . '/';
+  $variables['base_theme'] = $path_to_twostate = drupal_get_path('theme', 'twostate') . '/';
   $path_to_theme = path_to_theme() . '/';
   global $user, $theme_key;
 
-  pirobase_body_classes($variables);
-  pirobase_html_attributes($variables);
+  // strip sidebar classes so theme can add them
+  $exploder = explode(' ', $variables['body_classes']);
+  foreach($exploder as $key=>&$value){
+   //TODO: improve this if there is time
+   if(strstr($value, 'sidebar')){
+     unset($exploder[$key]);
+    }
+  }
+  $exploder = implode(' ', $exploder);
+  $variables['body_classes'] = $exploder;
+
+  twostate_body_classes($variables);
+  twostate_html_attributes($variables);
 
   $variables['path'] = $base_path . $path_to_theme;
 
   $site_name = $variables['site_name'];
   $variables['site_name_themed'] = l($site_name, '<front>', array('attributes' => array('id' => 'site-name')));
 
-  if ($variables['site_slogan']) {
-    $variables['site_slogan_themed'] = '<span id="site-slogan">'. $variables['site_slogan'] .'</span>';
-  }
-
-  if ($variables['mission']) {
-    $variables['mission_themed'] = '<span id="mission">'. $variables['mission'] .'</span>';
-  }
-
-  if ($variables['logo']) {
-    // this needs to not use preg_replace @todo: fix preg_replace 
-    $logo_path = preg_replace('@'. $GLOBALS['base_url'] .'/@i', '', $variables['logo']);
-    file_exists($logo_path) ?
-      $image = theme('image', $logo_path, $site_name) :
-      $image = theme('image', $path_to_pirobase .'/logo.png', $site_name);
-    $variables['logo_themed'] = l($image, '<front>', array('attributes' => array('id' => 'logo', 'rel' => 'home', 'title' => t('Return to the !site_name home page', array('!site_name' => $site_name))), 'html' => TRUE));
-  }
+  // Set IE6 & IE7 stylesheets, plus right-to-left versions
+  $theme_path = base_path() . path_to_theme();
+  $variables['ie7_styles'] = '<link type="text/css" rel="stylesheet" media="all" href="' . $theme_path . '/css/ie6-fixes.css" />' . "\n";
+  $variables['ie7_styles'] = '<link type="text/css" rel="stylesheet" media="all" href="' . $theme_path . '/css/ie7-fixes.css" />' . "\n";
+  $variables['ie8_styles'] = '<link type="text/css" rel="stylesheet" media="all" href="' . $theme_path . '/css/ie8-fixes.css" />' . "\n";
+  $variables['ie9_styles'] = '<link type="text/css" rel="stylesheet" media="all" href="' . $theme_path . '/css/ie9-fixes.css" />' . "\n";
 
   $variables['skip_link'] = '<ul class="acc-hide">
     <li><a href="#content" class="skip-link">Skip to content</a></li>
@@ -104,18 +102,46 @@ function pirobase_preprocess_page(&$variables) {
   $variables['secondary_links'] = (!empty($variables['secondary_links'])) ?
     theme('links', $variables['secondary_links'], array('class' => 'links secondary-links')) : '';
 
-  $variables['styles'] = drupal_get_css(pirobase_css_stripped());
+  $variables['styles'] = drupal_get_css(twostate_css_stripped());
 }
 
-function pirobase_html_attributes(&$variables) {
+/**
+* Override or insert PHPTemplate variables into the search_theme_form template.
+*
+* @param $variables
+*   A sequential array of variables to pass to the theme template.
+* @param $hook
+*   The name of the theme function being called (not used in this case.)
+*/
+function twostate_preprocess_search_theme_form(&$variables, $hook) {
+  // Remove the "Search this site" label from the form.
+  $variables['form']['search_theme_form']['#title'] = t('');
+
+  // Set a default value for text inside the search box field.
+  $variables['form']['search_theme_form']['#value'] = t('Search');
+
+  // Add a custom class and placeholder text to the search box.
+  $variables['form']['search_theme_form']['#attributes'] = array(
+  	'class' => '',
+  	'onblur' => "if (this.value == '') {this.value = '".$variables['form']['search_theme_form']['#value']."'; $(this).removeClass('search-default-font');}",
+  	'onfocus' => "if (this.value == '".$variables['form']['search_theme_form']['#value']."') {this.value = ''; $(this).addClass('search-default-font');}"
+  );
+
+  unset($variables['form']['search_theme_form']['#printed']);
+  $variables['search']['search_theme_form'] = drupal_render($variables['form']['search_theme_form']);
+  $variables['search_form'] = implode($variables['search']);
+
+}
+
+function twostate_html_attributes(&$variables) {
   $attributes = array();
   $language = $variables['language'];
-  
+
   $attributes['xmlns'] = 'http://www.w3.org/1999/xhtml';
   $attributes['xml:lang'] = $language->language;
   $attributes['lang'] = $language->language;
   $attributes['dir'] = $language->dir;
-  
+
   $variables['html_attr'] = $attributes;
 }
 
@@ -127,7 +153,7 @@ function pirobase_html_attributes(&$variables) {
  * @return $classes
  *   A string of node classes for inserting into the node template.
  */
-function pirobase_node_classes(&$variables) {
+function twostate_node_classes(&$variables) {
   $node = $variables['node'];
   $classes = array();
 
@@ -165,7 +191,7 @@ function pirobase_node_classes(&$variables) {
  * @return
  *   Adds data to $variables directly.
  */
-function pirobase_body_classes(&$variables) {
+function twostate_body_classes(&$variables) {
   $classes = array();
 
   // Merge in existing classes.
@@ -188,19 +214,40 @@ function pirobase_body_classes(&$variables) {
       $classes[] = $section_path;
     }
   }
+
+ // Override sidebar odentification
+  $variables['layout'] = 'none';
+  if (!empty($variables['left']) || !empty($variables['left_top'])) {
+    $variables['layout'] = 'left';
+  }
+  if (!empty($variables['right']) || !empty($variables['right_top'])) {
+    $variables['layout'] = ($variables['layout'] == 'left') ? 'both' : 'right';
+  }
+
+  // Add information about the number of sidebars.
+  if ($variables['layout'] == 'both') {
+    $classes[] = 'two-sidebars';
+  }
+  elseif ($variables['layout'] == 'none') {
+    $classes[] = 'no-sidebars';
+  }
+  else {
+    $classes[] = 'one-sidebar sidebar-' . $variables['layout'];
+  }
+
   $variables['attr']['class'] .= implode(' ', $classes);
 
   // System path gives us the id, replacing slashes with dashes.
   $system_path = drupal_get_normal_path($path);
   if ($section_path) {
     $variables['attr']['id'] = 'page-'. str_replace('/', '-', $system_path);
-  }  
+  }
 }
 
 /**
  * Implementation of preprocess_block().
  */
-function pirobase_preprocess_block(&$variables) {
+function twostate_preprocess_block(&$variables) {
   $variables['attr']['id'] = "block-{$variables['block']->module}-{$variables['block']->delta}";
   $variables['attr']['class'] = "block block-{$variables['block']->module}";
 
@@ -210,6 +257,20 @@ function pirobase_preprocess_block(&$variables) {
   $variables['hook'] = 'block';
   $variables['title'] = $variables['block']->subject;
   $variables['content'] = $variables['block']->content;
+
+  // First/last block position
+  $variables['position'] = ($variables['block_id'] == 1) ? 'first' : '';
+  if ($variables['block_id'] == count(block_list($block->region))) {
+    $variables['position'] = ($variables['position']) ? 'first last' : 'last';
+  }
+
+  if (user_access('administer blocks')) {
+    include_once './' . drupal_get_path('theme', 'twostate') . '/template.block-editing.inc';
+    $variables['edit_links_array'] = array();
+    $variables['edit_links'] = '';
+    twostate_preprocess_block_editing($variables, $hook);
+    $block_classes[] = 'block-editing';
+  }
 }
 
 /**
@@ -218,7 +279,7 @@ function pirobase_preprocess_block(&$variables) {
  * @param $variables
  *   An array of variables to pass to the theme template.
  */
-function pirobase_preprocess_comment(&$variables) {
+function twostate_preprocess_comment(&$variables) {
   $comment = $variables['comment'];
 
   $variables['pre'] = '';
@@ -229,7 +290,7 @@ function pirobase_preprocess_comment(&$variables) {
 
   $variables['attr']['class'] = "comment {$variables['status']}";
 
-  if ($comment->new) {  
+  if ($comment->new) {
     $variables['attr']['class'] .= ' comment-new';
   }
   if ($variables['zebra']) {
@@ -238,9 +299,18 @@ function pirobase_preprocess_comment(&$variables) {
 }
 
 /**
+ * Adds a class for the style of view
+ * (e.g., node, teaser, list, table, etc.)
+ * (Requires views-view.tpl.php file in theme directory)
+ */
+function twostate_preprocess_views_view(&$variables) {
+  $variables['css_name'] = $variables['css_name'] .' view-style-'. views_css_safe(strtolower($variables['view']->type));
+}
+
+/**
  * Implementation of preprocess_box().
  */
-function pirobase_preprocess_box(&$variables) {
+function twostate_preprocess_box(&$variables) {
   $attr = array();
   $variables['attr']['class'] = "box";
 
@@ -251,7 +321,7 @@ function pirobase_preprocess_box(&$variables) {
 /**
  * Implementation of preprocess_fieldset().
  */
-function pirobase_preprocess_fieldset(&$variables) {
+function twostate_preprocess_fieldset(&$variables) {
   $variables['hook'] = 'fieldset';
   $element = $variables['element'];
 
@@ -286,37 +356,22 @@ function pirobase_preprocess_fieldset(&$variables) {
   }
   $variables['content'] = $description . $children . $value;
 
+  // TODO: this is generating weird output on permissions page
   if (!empty($element['#title'])) {
     $variables['title'] = $element['#title'];
   }
   if (!empty($element['#collapsible']) || !empty($element['#collapsed'])) {
     $variables['title'] = l($variables['title'], $_GET['q'], array('fragment' => 'fieldset'));
   }
+
 }
 
-/**
- * Override theme_menu_local_tasks().
- *
- * Add clear-block class to ul elements.
- */
-function pirobase_menu_local_tasks() {
-  $output = '<div id="tabs">';
-  if ($primary = menu_primary_local_tasks()) {
-    $output .= "<ul class='tabs primary links'>$primary</ul>";
-  }
-  if ($secondary = menu_secondary_local_tasks()) {
-    $output .= "<ul class='tabs secondary links'>$secondary</ul>";
-  }
-  $output .= '</div>';
-
-  return $output;
-}
 
 /**
  * Strips CSS files from a Drupal CSS array whose filenames start with
  * prefixes provided in the $match argument.
  */
-function pirobase_css_stripped($match = array('modules/*'), $exceptions = NULL) {
+function twostate_css_stripped($match = array('modules/*'), $exceptions = NULL) {
   // Set default exceptions
   if (!is_array($exceptions)) {
     $exceptions = array(
@@ -345,16 +400,17 @@ function pirobase_css_stripped($match = array('modules/*'), $exceptions = NULL) 
 /**
  * Only show the breadcrumb trail if there are more items than just 'Home'.
  */
-function pirobase_breadcrumb($breadcrumb) {
-  if (count($breadcrumb) > 1) {
-    return '<div class="breadcrumb">'. implode(' &raquo; ', $breadcrumb) .'</div>';
+function twostate_breadcrumb($breadcrumb) {
+  if (!empty($breadcrumb)) {
+    $breadcrumb[] = drupal_get_title();
+    return '<div class="breadcrumb">'. implode(' &rsaquo; ', $breadcrumb) .'</div>';
   }
 }
 
 /**
 * Override theme_textfield().
 */
-function pirobase_textfield($element) {
+function twostate_textfield($element) {
   if ($element['#size'] >= 15) {
     $element['#size'] = '';
     $element['#attributes']['class'] = isset($element['#attributes']['class']) ? "{$element['#attributes']['class']} fluid" : "fluid";
@@ -362,7 +418,7 @@ function pirobase_textfield($element) {
   return theme_textfield($element);
 }
 
-function pirobase_file($element) {
+function twostate_file($element) {
   _form_set_class($element, array('form-file'));
   if ($element['#size'] >= 15) {
     $element['#size'] = '';
@@ -371,7 +427,7 @@ function pirobase_file($element) {
   return theme('form_element', $element, '<input type="file" name="'. $element['#name'] .'"'. ($element['#attributes'] ? ' '. drupal_attributes($element['#attributes']) : '') .' id="'. $element['#id'] .'" size="'. $element['#size'] ."\" />\n");
 }
 
-function pirobase_password($element) {
+function twostate_password($element) {
   if ($element['#size'] >= 15) {
     $element['#size'] = '';
     $element['#attributes']['class'] = isset($element['#attributes']['class']) ? "{$element['#attributes']['class']} fluid" : "fluid";
@@ -393,7 +449,7 @@ function pirobase_password($element) {
  * @return
  *   A string containing an unordered list of links.
  */
-function pirobase_links($links, $attributes = array('class' => 'links')) {
+function twostate_links($links, $attributes = array('class' => 'links')) {
   global $language;
   $output = '';
 
@@ -445,6 +501,6 @@ function pirobase_links($links, $attributes = array('class' => 'links')) {
   return $output;
 }
 
-function pirobase_menu_local_task($link, $active = FALSE) {
+function twostate_menu_local_task($link, $active = FALSE) {
   return '<li '. ($active ? 'class="active" ' : '') .'>'. $link ."</li>";
 }

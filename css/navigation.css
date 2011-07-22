@@ -1,7 +1,6 @@
 /* $Id: navigation.css,v 1.0 2011/4/28 00:32:00 pirog Exp $ */
 
 /* Links */
-
 ul.links {
   padding: 0;
   margin: 0;
@@ -35,23 +34,20 @@ ul.links.inline li a {
   margin-right: 10px;
 }
 
-ul.links a.active,
-ul.links li.active a {
+ul.links a.active,ul.links li.active a {
   border: none;
 }
 
 /* Tabs */
-
 #tabs {
   margin-bottom: 10px;
 }
 
-ul.tabs li {
-  float: left;
+ul.tabs li { /*float: left;*/
+  
 }
 
-ul.tabs li a:link,
-ul.tabs li a:visited {
+ul.tabs li a:link,ul.tabs li a:visited {
   padding: 2px 5px;
 }
 
@@ -60,7 +56,6 @@ ul.tabs.secondary {
 }
 
 /* Menus */
-
 ul.menu {
   margin: 0;
 }
@@ -83,8 +78,48 @@ ul.menu li li a {
 }
 
 /* Node links */
-
 .node-links ul.links li a {
   padding: 0;
   margin-right: 10px;
 }
+
+/* Main Menu */
+#main_menu {
+  position: absolute;
+  z-index: 10;
+  width: 950px;
+  bottom: 0;
+  left: 0;
+  height: 40px;
+}
+
+#main_menu ul li {
+  padding: 0;
+  margin: 0px;
+}
+
+#main_menu a {
+  margin: 0;
+  margin-top: 5px;
+  display: block;
+  float: left;
+  width: auto;
+  height: 30px;
+  width: 125px;
+  text-align: center;
+  border-left: 1px solid #CCCCCC;
+}
+
+#main_menu .last a {
+  border-right: 1px solid #CCCCCC;
+}
+
+/* Two State */
+
+#header_top .header_links ul.menu {
+  padding-left: 0px;
+}
+
+
+
+

@@ -1,4 +1,4 @@
-/* $Id: color.css,v 1.0 2011/4/28 00:32:00 pirog Exp $ */
+/* $Id$ */
 
 /* Global */
 
@@ -13,42 +13,24 @@ td {
   color: #333;
 }
 
-#header {
-  background:#BAE2DD;
-}
-
-
-#footer {
-  background:#D2EFC9;
-  color:#777;
-}
-
 a:link {
   color: #007EE4;
 }
 
 a:visited {
-  color: #007EE4;
+  color: #899FAF;
 }
 
 a:hover {
-   color: #4BB0A3;
+  color: #007EE4;
 }
 
 a:visited:hover {
-   color: #4BB0A3;
+  color: #899FAF;
 }
 
 a:focus {
   color: #333;
-}
-
-tr.odd {
- /* background-color: #E6E6E6; */
-}
-
-tr.even {
- /* background-color: #FFF; */
 }
 
 th a:link,
@@ -59,7 +41,7 @@ th a:visited {
 /* Fieldsets */
 
 div.collapsible h2.fieldset-title {
-  background-color: #D6EDEA;
+  background-color: #ccc;
 }
 
 div.expanded h2.fieldset-title a:link,
@@ -182,3 +164,44 @@ div.admin-required {
 #admin-menu li li {
   opacity: 1;
 }
+
+/* Two State */
+
+#header_main {
+  background: url("../img/headerbg.jpg") no-repeat scroll center top transparent;
+}
+
+#header {
+  background: #eef1ef;
+}
+
+#footer_top {
+  background: url("../img/footerbg.jpg") repeat-y scroll center top #eef1ef;
+}
+
+#main_menu ul.links li a:hover {
+  background: #F7F8F7;
+}
+
+#main_menu ul.links li a {
+  color: #253F6A;
+}
+
+#main_menu ul.links li a.active {
+  background: #F7F8F7;
+}
+
+#header_search #search-theme-form input.form-text {
+  color: #8C8C8C;
+}
+
+#header_search #search-theme-form #edit-search-theme-form-1 {
+  background: #FFFFFF;
+}
+
+#header_search #search-theme-form input.search-default-font { 
+  color: #5A5A5A;
+}
+
+
+

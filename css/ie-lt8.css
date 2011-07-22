@@ -1,7 +1,0 @@
-/* $Id: ie-lt8.css,v 1.0 2011/4/28 00:32:00 pirog Exp $ */
-
-/* Fixes for IE < 8 */
-
-input.form-submit {
-  padding: 1px;
-}

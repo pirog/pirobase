@@ -11,10 +11,10 @@
  */
 function phptemplate_settings($saved_settings) {
 
-  $form['pirobase_rebuild_registry'] = array(
+  $form['twostate_rebuild_registry'] = array(
     '#type' => 'checkbox',
     '#title' => t('Rebuild theme registry on every page.'),
-    '#default_value' => isset($saved_settings['pirobase_rebuild_registry']) ? $saved_settings['pirobase_rebuild_registry'] : 0,
+    '#default_value' => isset($saved_settings['twostate_rebuild_registry']) ? $saved_settings['twostate_rebuild_registry'] : 0,
     '#description' => t('During theme development, it can be very useful to continuously <a href="!link">rebuild the theme registry</a>.<br/><strong>WARNING:</strong> this is a huge performance penalty and must be turned off on production websites.', array('!link' => 'http://drupal.org/node/173880#theme-registry')),
   );
 
