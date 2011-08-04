@@ -14,7 +14,7 @@
  * @param $hook
  *   The name of the template being rendered ("block" in this case.)
  */
-function twostate_preprocess_block_editing(&$variables, $hook) {
+function pirobase_preprocess_block_editing(&$variables, $hook) {
   $block = $variables['block'];
   // Display 'edit block' for custom blocks.
   if ($block->module == 'block') {

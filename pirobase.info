@@ -1,4 +1,4 @@
-; $Id: twostate.info,v 1.0 2011/4/28 00:32:00 pirog Exp $
+; $Id: pirobase.info,v 1.0 2011/4/28 00:32:00 pirog Exp $
 
 engine = phptemplate
 
@@ -11,7 +11,7 @@ stylesheets[all][] = css/navigation.css
 stylesheets[all][] = css/typography.css
 stylesheets[all][] = css/color.css
 
-scripts[] = js/twostate.js
+scripts[] = js/pirobase.js
 
 regions[header_top] = Header Top
 regions[header_bottom] = Header Bottom
@@ -36,8 +36,8 @@ features[] = favicon
 features[] = primary_links
 
 core = "6.x"
-description = "Theme for the American Task Force on Palestine. Based on pirobase (a clean theme derivative)."
-name = "Two States"
+description = "A clean theme derivative."
+name = "Pirobase"
 version = "6.x-1.0"
-project = "twostate"
+project = "pirobase"
 project status url = "http://www.piroshare.com/fserver"

@@ -1,0 +1,8 @@
+  ; The name and description of the theme used on the admin/build/themes page.
+name        = Piroshare
+description = A subtheme of pirobase
+screenshot = img/screenshot.png
+core       = 6.x
+base theme = pirobase
+
+stylesheets[all][] = css/color.css

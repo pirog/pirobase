@@ -2,14 +2,14 @@
 // $Id: template.php, v 1.0 2011/4/28 00:32:00 pirog Exp $
 
 // Auto-rebuild the theme registry during theme development.
-if (theme_get_setting('twostate_rebuild_registry')) {
+if (theme_get_setting('pirobase_rebuild_registry')) {
   drupal_rebuild_theme_registry();
 }
 
 /**
  * Modify theme variables
  */
-function twostate_preprocess(&$variables) {
+function pirobase_preprocess(&$variables) {
   global $user;                                            // Get the current user
   $variables['is_admin'] = in_array('admin', $user->roles);     // Check for Admin, logged in
   $variables['logged_in'] = ($user->uid > 0) ? TRUE : FALSE;
@@ -21,7 +21,7 @@ function twostate_preprocess(&$variables) {
  * @param $variables
  *   An array of variables to pass to the theme template.
  */
-function twostate_preprocess_node(&$variables) {
+function pirobase_preprocess_node(&$variables) {
   global $theme_key;
   $node = $variables['node'];
 
@@ -33,7 +33,7 @@ function twostate_preprocess_node(&$variables) {
   }
 
   // Create node classes.
-  twostate_node_classes($variables);
+  pirobase_node_classes($variables);
 
   // Add node template file suggestions for node-type-teaser and node-type-prevew
   if (!$variables['page']) {
@@ -58,9 +58,9 @@ function twostate_preprocess_node(&$variables) {
  * @param $variables
  *   An array of variables to pass to the theme template.
  */
-function twostate_preprocess_page(&$variables) {
+function pirobase_preprocess_page(&$variables) {
   $base_path = base_path();
-  $variables['base_theme'] = $path_to_twostate = drupal_get_path('theme', 'twostate') . '/';
+  $variables['base_theme'] = $path_to_pirobase = drupal_get_path('theme', 'pirobase') . '/';
   $path_to_theme = path_to_theme() . '/';
   global $user, $theme_key;
 
@@ -75,8 +75,8 @@ function twostate_preprocess_page(&$variables) {
   $exploder = implode(' ', $exploder);
   $variables['body_classes'] = $exploder;
 
-  twostate_body_classes($variables);
-  twostate_html_attributes($variables);
+  pirobase_body_classes($variables);
+  pirobase_html_attributes($variables);
 
   $variables['path'] = $base_path . $path_to_theme;
 
@@ -102,7 +102,7 @@ function twostate_preprocess_page(&$variables) {
   $variables['secondary_links'] = (!empty($variables['secondary_links'])) ?
     theme('links', $variables['secondary_links'], array('class' => 'links secondary-links')) : '';
 
-  $variables['styles'] = drupal_get_css(twostate_css_stripped());
+  $variables['styles'] = drupal_get_css(pirobase_css_stripped());
 }
 
 /**
@@ -113,7 +113,7 @@ function twostate_preprocess_page(&$variables) {
 * @param $hook
 *   The name of the theme function being called (not used in this case.)
 */
-function twostate_preprocess_search_theme_form(&$variables, $hook) {
+function pirobase_preprocess_search_theme_form(&$variables, $hook) {
   // Remove the "Search this site" label from the form.
   $variables['form']['search_theme_form']['#title'] = t('');
 
@@ -133,7 +133,7 @@ function twostate_preprocess_search_theme_form(&$variables, $hook) {
 
 }
 
-function twostate_html_attributes(&$variables) {
+function pirobase_html_attributes(&$variables) {
   $attributes = array();
   $language = $variables['language'];
 
@@ -153,7 +153,7 @@ function twostate_html_attributes(&$variables) {
  * @return $classes
  *   A string of node classes for inserting into the node template.
  */
-function twostate_node_classes(&$variables) {
+function pirobase_node_classes(&$variables) {
   $node = $variables['node'];
   $classes = array();
 
@@ -191,7 +191,7 @@ function twostate_node_classes(&$variables) {
  * @return
  *   Adds data to $variables directly.
  */
-function twostate_body_classes(&$variables) {
+function pirobase_body_classes(&$variables) {
   $classes = array();
 
   // Merge in existing classes.
@@ -247,7 +247,7 @@ function twostate_body_classes(&$variables) {
 /**
  * Implementation of preprocess_block().
  */
-function twostate_preprocess_block(&$variables) {
+function pirobase_preprocess_block(&$variables) {
   $variables['attr']['id'] = "block-{$variables['block']->module}-{$variables['block']->delta}";
   $variables['attr']['class'] = "block block-{$variables['block']->module}";
 
@@ -265,10 +265,10 @@ function twostate_preprocess_block(&$variables) {
   }
 
   if (user_access('administer blocks')) {
-    include_once './' . drupal_get_path('theme', 'twostate') . '/template.block-editing.inc';
+    include_once './' . drupal_get_path('theme', 'pirobase') . '/template.block-editing.inc';
     $variables['edit_links_array'] = array();
     $variables['edit_links'] = '';
-    twostate_preprocess_block_editing($variables, $hook);
+    pirobase_preprocess_block_editing($variables, $hook);
     $block_classes[] = 'block-editing';
   }
 }
@@ -279,7 +279,7 @@ function twostate_preprocess_block(&$variables) {
  * @param $variables
  *   An array of variables to pass to the theme template.
  */
-function twostate_preprocess_comment(&$variables) {
+function pirobase_preprocess_comment(&$variables) {
   $comment = $variables['comment'];
 
   $variables['pre'] = '';
@@ -303,14 +303,14 @@ function twostate_preprocess_comment(&$variables) {
  * (e.g., node, teaser, list, table, etc.)
  * (Requires views-view.tpl.php file in theme directory)
  */
-function twostate_preprocess_views_view(&$variables) {
+function pirobase_preprocess_views_view(&$variables) {
   $variables['css_name'] = $variables['css_name'] .' view-style-'. views_css_safe(strtolower($variables['view']->type));
 }
 
 /**
  * Implementation of preprocess_box().
  */
-function twostate_preprocess_box(&$variables) {
+function pirobase_preprocess_box(&$variables) {
   $attr = array();
   $variables['attr']['class'] = "box";
 
@@ -321,7 +321,7 @@ function twostate_preprocess_box(&$variables) {
 /**
  * Implementation of preprocess_fieldset().
  */
-function twostate_preprocess_fieldset(&$variables) {
+function pirobase_preprocess_fieldset(&$variables) {
   $variables['hook'] = 'fieldset';
   $element = $variables['element'];
 
@@ -371,7 +371,7 @@ function twostate_preprocess_fieldset(&$variables) {
  * Strips CSS files from a Drupal CSS array whose filenames start with
  * prefixes provided in the $match argument.
  */
-function twostate_css_stripped($match = array('modules/*'), $exceptions = NULL) {
+function pirobase_css_stripped($match = array('modules/*'), $exceptions = NULL) {
   // Set default exceptions
   if (!is_array($exceptions)) {
     $exceptions = array(
@@ -400,7 +400,7 @@ function twostate_css_stripped($match = array('modules/*'), $exceptions = NULL) 
 /**
  * Only show the breadcrumb trail if there are more items than just 'Home'.
  */
-function twostate_breadcrumb($breadcrumb) {
+function pirobase_breadcrumb($breadcrumb) {
   if (!empty($breadcrumb)) {
     $breadcrumb[] = drupal_get_title();
     return '<div class="breadcrumb">'. implode(' &rsaquo; ', $breadcrumb) .'</div>';
@@ -410,7 +410,7 @@ function twostate_breadcrumb($breadcrumb) {
 /**
 * Override theme_textfield().
 */
-function twostate_textfield($element) {
+function pirobase_textfield($element) {
   if ($element['#size'] >= 15) {
     $element['#size'] = '';
     $element['#attributes']['class'] = isset($element['#attributes']['class']) ? "{$element['#attributes']['class']} fluid" : "fluid";
@@ -418,7 +418,7 @@ function twostate_textfield($element) {
   return theme_textfield($element);
 }
 
-function twostate_file($element) {
+function pirobase_file($element) {
   _form_set_class($element, array('form-file'));
   if ($element['#size'] >= 15) {
     $element['#size'] = '';
@@ -427,7 +427,7 @@ function twostate_file($element) {
   return theme('form_element', $element, '<input type="file" name="'. $element['#name'] .'"'. ($element['#attributes'] ? ' '. drupal_attributes($element['#attributes']) : '') .' id="'. $element['#id'] .'" size="'. $element['#size'] ."\" />\n");
 }
 
-function twostate_password($element) {
+function pirobase_password($element) {
   if ($element['#size'] >= 15) {
     $element['#size'] = '';
     $element['#attributes']['class'] = isset($element['#attributes']['class']) ? "{$element['#attributes']['class']} fluid" : "fluid";
@@ -449,7 +449,7 @@ function twostate_password($element) {
  * @return
  *   A string containing an unordered list of links.
  */
-function twostate_links($links, $attributes = array('class' => 'links')) {
+function pirobase_links($links, $attributes = array('class' => 'links')) {
   global $language;
   $output = '';
 
@@ -501,6 +501,6 @@ function twostate_links($links, $attributes = array('class' => 'links')) {
   return $output;
 }
 
-function twostate_menu_local_task($link, $active = FALSE) {
+function pirobase_menu_local_task($link, $active = FALSE) {
   return '<li '. ($active ? 'class="active" ' : '') .'>'. $link ."</li>";
 }
