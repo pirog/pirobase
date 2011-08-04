@@ -3,6 +3,9 @@ name        = Piroshare
 description = A subtheme of pirobase
 screenshot = img/screenshot.png
 core       = 6.x
+version = "6.x-1.0"
 base theme = pirobase
+project = "pirobase"
+project status url = "http://www.piroshare.com/fserver"
 
 stylesheets[all][] = css/color.css

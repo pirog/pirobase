@@ -172,11 +172,11 @@ div.admin-required {
 }
 
 #header {
-  background: #eef1ef;
+  background: #BAE2DD;
 }
 
 #footer_top {
-  background: url("../img/footerbg.jpg") repeat-y scroll center top #eef1ef;
+  background: url("../img/footerbg.jpg") repeat-y scroll center top #D2EFC9;
 }
 
 #main_menu ul.links li a:hover {
